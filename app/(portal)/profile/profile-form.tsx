@@ -126,13 +126,15 @@ export function ProfileForm() {
       }
 
       // Update bio/dob via Supabase
-      await supabase
-        .from('profiles')
-        .update({
-          bio: data.bio,
-          dob: data.dob.toISOString().split('T')[0],
-        })
-        .eq('id', user!.id);
+      if (supabase) {
+        await supabase
+          .from('profiles')
+          .update({
+            bio: data.bio,
+            dob: data.dob.toISOString().split('T')[0],
+          })
+          .eq('id', user!.id);
+      }
     },
     onSuccess: () => {
       setImagePreview(undefined);

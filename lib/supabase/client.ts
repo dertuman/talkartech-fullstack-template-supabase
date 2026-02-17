@@ -1,38 +1,25 @@
 'use client';
 
 import { useSession } from '@clerk/nextjs';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { useMemo } from 'react';
 
 import type { Database } from '@/types/supabase';
 
-export function useClerkSupabaseClient() {
+export function useClerkSupabaseClient(): SupabaseClient<Database> | null {
   const { session } = useSession();
 
   const client = useMemo(() => {
-    return createClient<Database>(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        global: {
-          fetch: async (url, options = {}) => {
-            const clerkToken = await session?.getToken({
-              template: 'supabase',
-            });
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY;
 
-            const headers = new Headers(options?.headers);
-            if (clerkToken) {
-              headers.set('Authorization', `Bearer ${clerkToken}`);
-            }
+    if (!url || !publishableKey) return null;
 
-            return fetch(url, {
-              ...options,
-              headers,
-            });
-          },
-        },
-      }
-    );
+    return createClient<Database>(url, publishableKey, {
+      accessToken: async () => {
+        return (await session?.getToken()) ?? null;
+      },
+    });
   }, [session]);
 
   return client;

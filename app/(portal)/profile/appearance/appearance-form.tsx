@@ -59,6 +59,7 @@ export function AppearanceForm() {
   const updateAppearanceMutation = useMutation({
     mutationFn: async (data: AppearanceFormValues) => {
       if (!user) throw new Error('Not authenticated');
+      if (!supabase) throw new Error('Database not configured');
 
       await supabase
         .from('profiles')

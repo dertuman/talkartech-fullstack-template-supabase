@@ -78,6 +78,7 @@ export function AccountForm() {
   const updateProfileMutation = useMutation({
     mutationFn: async (data: AccountFormValues) => {
       if (!user) throw new Error('Not authenticated');
+      if (!supabase) throw new Error('Database not configured');
 
       await supabase
         .from('profiles')

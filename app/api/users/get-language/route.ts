@@ -13,6 +13,10 @@ export async function GET() {
   try {
     const supabase = await createClerkSupabaseClient();
 
+    if (!supabase) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
+    }
+
     const { data, error } = await supabase
       .from('profiles')
       .select('language')

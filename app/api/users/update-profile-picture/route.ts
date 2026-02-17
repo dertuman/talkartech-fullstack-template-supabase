@@ -1,29 +1,12 @@
 import { File } from 'buffer';
 import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { DeleteObjectCommand, PutObjectCommand, S3 } from '@aws-sdk/client-s3';
 
-import {
-  SPACES_ENDPOINT,
-  SPACES_KEY,
-  SPACES_NAME,
-  SPACES_REGION,
-  SPACES_SECRET,
-} from '@/lib/constants';
 import { createClerkSupabaseClient } from '@/lib/supabase/server';
+import { createSupabaseAdmin } from '@/lib/supabase/server';
 import { randomUppercaseString } from '@/lib/utils';
 
-function getS3Client() {
-  return new S3({
-    forcePathStyle: false,
-    endpoint: `https://${SPACES_REGION}.${SPACES_ENDPOINT}`,
-    region: SPACES_REGION!,
-    credentials: {
-      accessKeyId: SPACES_KEY!,
-      secretAccessKey: SPACES_SECRET!,
-    },
-  });
-}
+const BUCKET = 'profile-pictures';
 
 export async function POST(req: Request) {
   try {
@@ -43,23 +26,40 @@ export async function POST(req: Request) {
     if (!isFile && !isDelete)
       return NextResponse.json({ message: 'Please provide a file' });
 
+    const storage = createSupabaseAdmin();
+
+    if (!storage) {
+      return NextResponse.json({ error: 'Storage not configured' }, { status: 503 });
+    }
+
     let path;
     if (isFile) {
       const buffer = await file.arrayBuffer();
-      const Key = randomUppercaseString() + '_' + file.name;
-      path = 'https://PROJECT.fra1.digitaloceanspaces.com/' + Key;
-      await getS3Client().send(
-        new PutObjectCommand({
-          Bucket: SPACES_NAME,
-          Key,
-          Body: Buffer.from(buffer),
-          ContentType: file.type,
-          ACL: 'public-read-write',
-        })
-      );
+      const key = randomUppercaseString() + '_' + file.name;
+
+      const { error: uploadError } = await storage.storage
+        .from(BUCKET)
+        .upload(key, Buffer.from(buffer), {
+          contentType: file.type,
+          upsert: false,
+        });
+
+      if (uploadError) {
+        return NextResponse.json({ error: uploadError.message }, { status: 500 });
+      }
+
+      const { data: urlData } = storage.storage
+        .from(BUCKET)
+        .getPublicUrl(key);
+
+      path = urlData.publicUrl;
     }
 
     const supabase = await createClerkSupabaseClient();
+
+    if (!supabase) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
+    }
 
     const { error } = await supabase
       .from('profiles')
@@ -74,19 +74,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    // Delete old profile picture from storage
     if (
       currentProfilePicture &&
       currentProfilePicture.length > 0 &&
       currentProfilePicture !==
-        'https://placehold.co/600x400/png?text=Hello+World'
+        'https://placehold.co/600x400/png?text=Hello+World' &&
+      currentProfilePicture.includes(BUCKET)
     ) {
-      const oldKey = new URL(currentProfilePicture).pathname.substring(1); // Remove the leading '/'
-      await getS3Client().send(
-        new DeleteObjectCommand({
-          Bucket: SPACES_NAME,
-          Key: oldKey,
-        })
-      );
+      const oldKey = currentProfilePicture.split(`${BUCKET}/`).pop();
+      if (oldKey) {
+        await storage.storage.from(BUCKET).remove([oldKey]);
+      }
     }
 
     return NextResponse.json({

@@ -28,7 +28,7 @@ export function UserDataProvider({ children }: { children: ReactNode }) {
   } = useQuery<Profile | null>({
     queryKey: ['userData'],
     queryFn: async () => {
-      if (!user?.id) return null;
+      if (!user?.id || !supabase) return null;
 
       const { data, error } = await supabase
         .from('profiles')
@@ -44,7 +44,7 @@ export function UserDataProvider({ children }: { children: ReactNode }) {
       return data;
     },
     staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
-    enabled: !!isSignedIn && !!user?.id,
+    enabled: !!isSignedIn && !!user?.id && !!supabase,
   });
 
   const refreshUserData = () => {

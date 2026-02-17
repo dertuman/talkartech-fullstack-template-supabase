@@ -15,6 +15,10 @@ export async function POST(req: NextRequest) {
 
     const supabase = await createClerkSupabaseClient();
 
+    if (!supabase) {
+      return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
+    }
+
     const { error } = await supabase
       .from('profiles')
       .update({ language: locale })

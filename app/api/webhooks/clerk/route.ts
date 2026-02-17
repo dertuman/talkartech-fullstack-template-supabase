@@ -16,8 +16,9 @@ export async function POST(req: Request) {
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
 
   if (!WEBHOOK_SECRET) {
-    throw new Error(
-      'Please add CLERK_WEBHOOK_SECRET from Clerk Dashboard to .env'
+    return NextResponse.json(
+      { error: 'Webhook secret not configured' },
+      { status: 503 }
     );
   }
 
@@ -54,6 +55,13 @@ export async function POST(req: Request) {
   }
 
   const supabase = createSupabaseAdmin();
+
+  if (!supabase) {
+    return NextResponse.json(
+      { error: 'Database not configured' },
+      { status: 503 }
+    );
+  }
 
   if (evt.type === 'user.created') {
     const { id } = evt.data;

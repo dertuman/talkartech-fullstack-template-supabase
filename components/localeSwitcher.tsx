@@ -38,7 +38,7 @@ export default function LocaleSwitcher() {
 
   const updateLocaleMutation = useMutation({
     mutationFn: async (locale: string) => {
-      if (user) {
+      if (user && supabase) {
         await supabase
           .from('profiles')
           .update({ language: locale })

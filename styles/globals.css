@@ -37,15 +37,15 @@
   }
 
   .dark {
-    /* #020817 */
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* #09090b — neutral-950 */
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
 
-    --card: 222.2 84% 7.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
 
     --primary: 205 60% 50%;
     --primary-muted: 210 25% 40% 0.8;
@@ -117,7 +117,7 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #1e293b;
+  background: #171717;
   border-radius: 10px;
 }
 
