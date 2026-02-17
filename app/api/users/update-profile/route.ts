@@ -1,46 +1,52 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
-import { UserModel } from '@/models/UserModel';
+import { auth } from '@clerk/nextjs/server';
 
-import dbConnect from '@/lib/db';
+import { createClerkSupabaseClient } from '@/lib/supabase/server';
 
 export async function POST(req: NextRequest) {
-  await dbConnect();
-  const session = await auth();
+  const { userId } = await auth();
 
-  if (!session?.user?.id) {
+  if (!userId) {
     return NextResponse.json({ error: 'Not authorized' }, { status: 401 });
   }
 
   try {
     const formData = await req.formData();
-    const updateOperation: any = {};
+    const updateOperation: Record<string, string> = {};
 
-    // Basic profile fields
-    if (formData.get('name')) updateOperation.name = formData.get('name');
-    if (formData.get('bio')) updateOperation.bio = formData.get('bio');
-    if (formData.get('dob')) updateOperation.dob = formData.get('dob');
+    // Profile fields stored in Supabase
+    if (formData.get('bio')) updateOperation.bio = formData.get('bio') as string;
+    if (formData.get('dob')) updateOperation.dob = formData.get('dob') as string;
     if (formData.get('profilePicture'))
-      updateOperation.profilePicture = formData.get('profilePicture');
-    if (formData.get('font')) updateOperation.font = formData.get('font');
-    if (formData.get('theme')) updateOperation.theme = formData.get('theme');
+      updateOperation.profile_picture = formData.get('profilePicture') as string;
+    if (formData.get('font')) updateOperation.font = formData.get('font') as string;
+    if (formData.get('theme'))
+      updateOperation.theme = formData.get('theme') as string;
     if (formData.get('language'))
-      updateOperation.language = formData.get('language');
+      updateOperation.language = formData.get('language') as string;
 
-    const updatedUser = await UserModel.findByIdAndUpdate(
-      session.user.id,
-      updateOperation,
-      { new: true, runValidators: true }
-    );
+    const supabase = await createClerkSupabaseClient();
 
-    if (!updatedUser) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .update(updateOperation)
+      .eq('id', userId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Supabase error:', error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    if (!data) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     return NextResponse.json({
       message: 'Profile updated successfully',
       success: true,
-      user: updatedUser,
+      user: data,
     });
   } catch (error: any) {
     console.error('Error updating profile:', error);

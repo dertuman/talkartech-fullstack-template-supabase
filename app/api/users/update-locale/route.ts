@@ -1,27 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
-import { UserModel } from '@/models/UserModel';
+import { auth } from '@clerk/nextjs/server';
 
-import dbConnect from '@/lib/db';
+import { createClerkSupabaseClient } from '@/lib/supabase/server';
 
 export async function POST(req: NextRequest) {
-  await dbConnect();
-  const session = await auth();
+  const { userId } = await auth();
 
-  if (!session?.user?.id) {
+  if (!userId) {
     return NextResponse.json({ error: 'Not authorized' }, { status: 401 });
   }
+
   try {
     const { locale } = await req.json();
 
-    const updateResult = await UserModel.findByIdAndUpdate(
-      session.user.id,
-      { $set: { language: locale } },
-      { new: true }
-    ).lean();
+    const supabase = await createClerkSupabaseClient();
 
-    if (!updateResult) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    const { error } = await supabase
+      .from('profiles')
+      .update({ language: locale })
+      .eq('id', userId);
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
     return NextResponse.json({

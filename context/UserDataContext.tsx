@@ -1,13 +1,14 @@
 'use client';
 
 import { createContext, ReactNode, useContext } from 'react';
-import { User } from '@/models/UserModel';
+import { useUser } from '@clerk/nextjs';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
-import { useSession } from 'next-auth/react';
+
+import { useClerkSupabaseClient } from '@/lib/supabase/client';
+import type { Profile } from '@/types/supabase';
 
 interface UserDataContextType {
-  userData: User | null;
+  profile: Profile | null;
   isLoading: boolean;
   error?: string;
   refreshUserData: () => void;
@@ -17,20 +18,33 @@ const UserDataContext = createContext<UserDataContextType | null>(null);
 
 export function UserDataProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
-  const { status } = useSession();
+  const { isSignedIn, user } = useUser();
+  const supabase = useClerkSupabaseClient();
 
   const {
-    data: userData,
+    data: profile,
     isLoading,
     error,
-  } = useQuery<{ data: User }>({
+  } = useQuery<Profile | null>({
     queryKey: ['userData'],
     queryFn: async () => {
-      const response = await axios.get('/api/users/get-user-data-private');
-      return response.data;
+      if (!user?.id) return null;
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching profile:', error);
+        return null;
+      }
+
+      return data;
     },
     staleTime: 1000 * 60 * 5, // Consider data fresh for 5 minutes
-    enabled: status === 'authenticated', // Only run query if user is authenticated
+    enabled: !!isSignedIn && !!user?.id,
   });
 
   const refreshUserData = () => {
@@ -40,7 +54,7 @@ export function UserDataProvider({ children }: { children: ReactNode }) {
   return (
     <UserDataContext.Provider
       value={{
-        userData: userData?.data || null,
+        profile: profile ?? null,
         isLoading,
         error: error?.message,
         refreshUserData,

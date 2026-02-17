@@ -1,30 +1,36 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/auth';
-import { User, UserModel } from '@/models/UserModel';
+import { auth } from '@clerk/nextjs/server';
 
-import dbConnect from '@/lib/db';
+import { createClerkSupabaseClient } from '@/lib/supabase/server';
 
 export async function GET() {
-  await dbConnect();
-  const session = await auth();
+  const { userId } = await auth();
 
-  if (!session) {
+  if (!userId) {
     return NextResponse.json({ error: 'Not authorized' }, { status: 401 });
   }
 
   try {
-    const retrievedUser: User | null = await UserModel.findById(
-      session.user?.id
-    );
+    const supabase = await createClerkSupabaseClient();
 
-    if (!retrievedUser) {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('language')
+      .eq('id', userId)
+      .single();
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    if (!data) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     return NextResponse.json({
       message: 'User language retrieved successfully',
       success: true,
-      language: retrievedUser.language,
+      language: data.language,
     });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

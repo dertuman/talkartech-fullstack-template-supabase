@@ -1,13 +1,6 @@
 import { Metadata } from 'next';
-import { defaultLocale, locales } from '@/middleware';
 
 import { API_BASE_URL } from './constants';
-
-type GenerateMetadataOptions = {
-  path: string;
-  currentLocale: string;
-  addXDefault?: boolean;
-};
 
 type GenerateDefaultMetadataOptions = {
   currentLocale: string;
@@ -29,30 +22,6 @@ type GenerateDefaultMetadataOptions = {
   keywords?: string[];
 };
 
-export function generateAlternates({
-  path,
-  currentLocale,
-  addXDefault = true,
-}: GenerateMetadataOptions): NonNullable<Metadata['alternates']> {
-  const baseUrl = API_BASE_URL;
-  const normalizedPath = path === '/' ? '' : path.replace(/\/$/, '');
-  const canonical = `${baseUrl}/${currentLocale}${normalizedPath}`;
-
-  const languages: Record<string, string> = {};
-  locales.forEach((locale) => {
-    languages[locale] = `${baseUrl}/${locale}${normalizedPath}`;
-  });
-
-  if (addXDefault) {
-    languages['x-default'] = `${baseUrl}/${defaultLocale}${normalizedPath}`;
-  }
-
-  return {
-    canonical,
-    languages,
-  };
-}
-
 export function generateDefaultMetadata({
   currentLocale,
   path,
@@ -66,24 +35,21 @@ export function generateDefaultMetadata({
   },
 }: GenerateDefaultMetadataOptions): Metadata {
   const baseUrl = API_BASE_URL || 'http://localhost:3000';
-  const alternates = generateAlternates({
-    path,
-    currentLocale,
-    addXDefault: true,
-  });
-
-  const pageUrl = new URL(`/${currentLocale}${path}`, baseUrl).toString();
+  const normalizedPath = path === '/' ? '' : path.replace(/\/$/, '');
+  const canonical = `${baseUrl}${normalizedPath}`;
 
   return {
     metadataBase: new URL(baseUrl),
     title: translations.title,
     description: translations.description,
     keywords: keywords.length > 0 ? keywords.join(', ') : undefined,
-    alternates,
+    alternates: {
+      canonical,
+    },
     openGraph: {
       type: 'website',
       locale: translations.ogLocale || currentLocale,
-      url: pageUrl,
+      url: canonical,
       siteName: translations.ogSiteName || 'PROJECT',
       title: translations.title,
       description: translations.description,

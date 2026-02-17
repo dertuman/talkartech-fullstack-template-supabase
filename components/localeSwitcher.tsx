@@ -6,14 +6,14 @@ import {
   useScopedI18n,
 } from '@/locales/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
-import { useSession } from 'next-auth/react';
+import { useUser } from '@clerk/nextjs';
 
 import 'flag-icons/css/flag-icons.min.css';
 
 import { useCallback } from 'react';
-import { Locale, locales } from '@/middleware';
+import { Locale, locales } from '@/lib/locales';
 
+import { useClerkSupabaseClient } from '@/lib/supabase/client';
 import { getRandomAnimalEmoji } from '@/lib/utils';
 import { toast } from '@/components/ui/use-toast';
 
@@ -25,11 +25,12 @@ const LOCALE_TO_FLAG: Record<Locale, string> = {
 };
 
 export default function LocaleSwitcher() {
-  const { data: session } = useSession();
+  const { user } = useUser();
   const t = useScopedI18n('localeSwitcher');
   const changeLocale = useChangeLocale();
   const queryClient = useQueryClient();
   const currentLocale = useCurrentLocale();
+  const supabase = useClerkSupabaseClient();
   const getCountryCode = useCallback(
     (locale: string) => LOCALE_TO_FLAG[locale as Locale] ?? locale,
     []
@@ -37,7 +38,12 @@ export default function LocaleSwitcher() {
 
   const updateLocaleMutation = useMutation({
     mutationFn: async (locale: string) => {
-      if (session) await axios.post('/api/users/update-locale', { locale });
+      if (user) {
+        await supabase
+          .from('profiles')
+          .update({ language: locale })
+          .eq('id', user.id);
+      }
       return locale;
     },
     onMutate: async (newLocale) => {

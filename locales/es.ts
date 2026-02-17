@@ -5,69 +5,6 @@ export default {
       translations: 'Traducciones',
     },
   },
-  login: {
-    metaData: {
-      title: 'Iniciar sesión - PROJECT',
-      description: 'Inicia sesión en tu cuenta PROJECT',
-      openGraph: {
-        locale: 'es_ES',
-      },
-      imageAlt: 'Inicio de sesión PROJECT',
-    },
-    header: 'Iniciar sesión',
-    enterEmail: 'Introduce tu correo electrónico',
-    emailRequired: 'Por favor, introduce tu correo electrónico',
-    emailInvalid: 'El correo electrónico no es válido',
-    emailVerified: 'Correo electrónico verificado',
-    enterPassword: 'Introduce tu contraseña',
-    passwordRequired: 'Por favor, introduce tu contraseña',
-    passwordMinLength: 'La contraseña debe tener al menos 8 caracteres',
-    loginWithGoogle: 'Continuar con Google',
-  },
-  register: {
-    header: 'Registrarse',
-    name: 'Nombre',
-    enterName: 'Introduce tu nombre',
-    nameRequired: 'Por favor, introduce tu nombre',
-    nameInvalid: 'El nombre no es válido',
-    email: 'Correo electrónico',
-    enterEmail: 'Introduce tu correo electrónico',
-    emailRequired: 'Por favor, introduce tu correo electrónico',
-    emailInvalid: 'El correo electrónico no es válido',
-    password: 'Contraseña',
-    enterPassword: 'Introduce tu contraseña',
-    passwordRequired: 'La contraseña es obligatoria',
-    passwordMinLength: 'La contraseña debe tener al menos 8 caracteres',
-    confirmPassword: 'Confirmar contraseña',
-    enterConfirmPassword: 'Introduce tu contraseña',
-    passwordMismatch: '¡Las contraseñas deben coincidir!',
-    register: 'Registrarse',
-    successTitle: 'Éxito 🫡',
-    successDescription:
-      'Fantástico, ahora por favor revisa tu correo electrónico y simplemente haz clic en el enlace 🎉',
-    errorRegistering: 'Error al registrarse 😢',
-    errorDescription:
-      'Hubo un error durante el registro. Por favor, inténtelo de nuevo.',
-    metaData: {
-      title: 'PROJECT® - La plataforma de desarrollo de software',
-      description:
-        'Descubre PROJECT®, la plataforma definitiva para el desarrollo y la colaboración de software. ¡Únete a PROJECT® hoy y da vida a tus proyectos!',
-      openGraph: {
-        locale: 'es',
-      },
-      imageAlt: 'PROJECT® - La plataforma de desarrollo de software',
-    },
-  },
-  emailVerification: {
-    emailVerified: '¡Bienvenido a PROJECT®!',
-    congratulations:
-      '¡Felicidades! Todo lo que tienes que hacer es terminar tu registro visitando PROJECT a través del botón de abajo.',
-    confirmButton: 'Confirma tu cuenta',
-  },
-  passwordReset: {
-    header: 'Restablecer contraseña',
-    backToLogin: 'Volver a iniciar sesión',
-  },
   profile: {
     settings: 'Configuración',
     manage:
@@ -126,22 +63,6 @@ export default {
       updateAppearance: 'Actualizar apariencia',
       customize: 'Personaliza tu experiencia. Establece tu tema preferido.',
     },
-    notifications: {
-      markAsRead: 'Marcar como leído',
-      title: 'Notificaciones',
-      configure: 'Configura cómo recibir notificaciones.',
-      notifyMeAbout: 'Notificarme sobre...',
-      allNewMessages: 'Todos los mensajes nuevos',
-      directMessages: 'Mensajes directos y menciones',
-      nothing: 'Nada',
-      emailNotifications: 'Notificaciones por correo electrónico',
-      securityEmails: 'Correos electrónicos de seguridad',
-      securityEmailsDescription:
-        'Recibe correos electrónicos sobre la actividad y seguridad de tu cuenta.',
-      updateNotifications: 'Actualizar notificaciones',
-      proposalReceived: 'Nueva propuesta recibida para la actividad {title}',
-      proposalSubmitted: 'Nueva propuesta enviada para la actividad',
-    },
     display: {
       title: 'Mostrar',
       turnItemsOnOrOff: 'Controla tu aplicación y activa o desactiva elementos',
@@ -154,10 +75,6 @@ export default {
   },
   common: {
     loading: 'Cargando...',
-    register: 'Registrarse',
-    email: 'Correo electrónico',
-    password: 'Contraseña',
-    forgotPassword: '¿Olvidaste tu contraseña?',
     login: 'Iniciar sesión',
     cancel: 'Cancelar',
     errorTitle: 'Error',
@@ -178,17 +95,8 @@ export default {
     login: 'Iniciar sesión',
     about: 'Acerca de',
     admin: 'Administrador',
-    notifications: 'Notificaciones',
-    viewAllNotifications: 'Ver todas las notificaciones',
-    noNotificationsFound: 'No se encontraron notificaciones',
     profile: 'Perfil',
     comingSoon: 'Próximamente',
-  },
-  notifications: {
-    noNotificationsFound: 'No se encontraron notificaciones',
-    markAllAsRead: 'Marcar todas como leídas',
-    markAsRead: 'Marcar como leído',
-    view: 'Ver',
   },
   localeSwitcher: {
     languageUpdated: 'Idioma actualizado con éxito',
@@ -203,44 +111,6 @@ export default {
     whatsapp: 'WhatsApp:',
     followUs: 'Síguenos',
     allRightsReserved: '© {year} PROJECT. Todos los derechos reservados.',
-  },
-  authDialog: {
-    joinUs: 'Unirse a PROJECT®',
-    joinUsDescription:
-      'Inicia sesión para guardar tu progreso, unirte al ranking y desbloquear todas las funciones!',
-    orUseCredentials: 'o usa credenciales',
-    name: 'Nombre',
-    enterName: 'Introduce tu nombre',
-    nameRequired: 'El nombre es obligatorio',
-    email: 'Correo electrónico',
-    enterEmail: 'Introduce tu correo electrónico',
-    emailRequired: 'El correo electrónico es obligatorio',
-    emailInvalid: 'Por favor, introduce un correo electrónico válido',
-    password: 'Contraseña',
-    enterPassword: 'Introduce tu contraseña',
-    passwordRequired: 'La contraseña es obligatoria',
-    passwordMinLength: 'La contraseña debe tener al menos 8 caracteres',
-    confirmPassword: 'Confirmar contraseña',
-    enterConfirmPassword: 'Confirma tu contraseña',
-    confirmPasswordRequired: 'Por favor, confirma tu contraseña',
-    passwordMismatch: 'Las contraseñas no coinciden',
-    noAccount: '¿Nuevo aquí?',
-    haveAccount: '¿Ya tienes una cuenta?',
-    createAccount: 'Crea una cuenta en este diálogo!',
-    signIn: 'Iniciar sesión',
-    login: 'Iniciar sesión',
-    register: 'Registrarse',
-    cancel: 'Cancelar',
-    error: 'Error de autenticación',
-    emailVerificationRequired: 'Se requiere verificación de correo electrónico',
-    emailVerificationMessage:
-      'Revisa tu correo electrónico y haz clic en el enlace de verificación, revisa la carpeta de spam, o haz clic en el botón de abajo para reenviarlo.',
-    resendEmail: 'Reenviar correo',
-    verificationEmailSent: 'Correo de verificación enviado',
-    verificationEmailSentDescription:
-      'Por favor, revisa tu correo electrónico y haz clic en el enlace de verificación para completar la configuración de tu cuenta.',
-    verificationEmailError:
-      'Error al enviar el correo de verificación. Por favor, inténtalo de nuevo.',
   },
   cookies: {
     title: '🍪 Valoramos tu privacidad',
@@ -271,11 +141,9 @@ export default {
     savePreferences: 'Guardar preferencias',
   },
   badges: {
-    // General statuses
     pending: 'Pendiente',
     approved: 'Aprobado',
     rejected: 'Rechazado',
-    // Boolean statuses
     active: 'Activo',
     inactive: 'Inactivo',
     featured: 'Destacado',

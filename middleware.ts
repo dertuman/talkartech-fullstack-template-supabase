@@ -1,33 +1,18 @@
-import { NextRequest } from 'next/server';
-import { createI18nMiddleware } from 'next-international/middleware';
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-export const locales = ['en', 'es'] as const;
-export const localeLabels = [
-  { label: 'English', value: 'en' },
-  { label: 'Spanish', value: 'es' },
-];
-export type Locale = (typeof locales)[number];
+const isProtectedRoute = createRouteMatcher(['/profile(.*)']);
 
-export const defaultLocale = 'en';
-
-const I18nMiddleware = createI18nMiddleware({
-  locales,
-  defaultLocale,
-  urlMappingStrategy: 'rewriteDefault',
+export default clerkMiddleware(async (auth, req) => {
+  if (isProtectedRoute(req)) {
+    await auth.protect();
+  }
 });
-
-export function middleware(request: NextRequest) {
-  return I18nMiddleware(request);
-}
 
 export const config = {
   matcher: [
-    // Match all pathnames except those starting with:
-    // - api (API routes)
-    // - _next (Next.js internals)
-    // - .*\\..*$ (files with extensions, e.g., favicon.ico)
-    // - manifest.json
-    // - service-worker.js, sw.js
-    '/((?!api|_next|.*\\..*|manifest\\.json|service-worker\\.js|sw\\.js).*)',
+    // Skip Next.js internals and all static files, unless found in search params
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
+    '/(api|trpc)(.*)',
   ],
 };

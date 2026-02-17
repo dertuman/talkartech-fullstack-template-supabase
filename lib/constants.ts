@@ -1,11 +1,5 @@
-export const MONGODB_URI = process.env.MONGODB_URI || '';
 export const NEXT_PUBLIC_NODE_ENV = process.env.NEXT_PUBLIC_NODE_ENV || '';
 
-export const AUTH_SECRET = process.env.AUTH_SECRET || '';
-export const AUTH_GOOGLE_ID = process.env.GOOGLE_ID || '';
-export const AUTH_GOOGLE_SECRET = process.env.GOOGLE_SECRET || '';
-
-export const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 export const API_BASE_URL = process.env.API_BASE_URL || '';
 export const PORT = process.env.PORT || '';
 

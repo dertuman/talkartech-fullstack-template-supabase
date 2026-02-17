@@ -2,10 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useUserData } from '@/context/UserDataContext';
 import { useScopedI18n } from '@/locales/client';
-import { useSession } from 'next-auth/react';
+import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -18,7 +17,7 @@ import { buttonVariants } from './ui/button';
 
 export function SiteHeader() {
   const t = useScopedI18n('siteHeader');
-  const { userData } = useUserData();
+  const { profile } = useUserData();
   const siteConfig = {
     description:
       'PROJECT empowers your business with cutting-edge technology solutions.',
@@ -29,7 +28,7 @@ export function SiteHeader() {
         isPublic: true,
         comingSoon: false,
       },
-      ...(userData?.isAdmin
+      ...(profile?.is_admin
         ? [
             {
               title: t('admin'),
@@ -39,32 +38,21 @@ export function SiteHeader() {
           ]
         : []),
     ],
-    links: {
-      notifications: '/notifications',
-      profile: '/profile',
-    },
   };
 
-  const router = useRouter();
-  const { status } = useSession();
-  const isAuthenticated = status === 'authenticated';
   const [isMobileMenuSheetOpen, setMobileMenuSheetOpen] = useState(false);
 
   const closeSheet = () => setMobileMenuSheetOpen(false);
 
-  const login = () => {
-    router.push('/login');
-  };
-
   return (
     <header className="bg-card sticky top-0 z-40 w-full border-b shadow-lg">
       <div className="container flex h-16 items-center pe-2 ps-4 sm:justify-between sm:space-x-0 md:pe-4">
-        <MainNav items={siteConfig.mainNav} isAuthenticated={isAuthenticated} />
+        <MainNav items={siteConfig.mainNav} />
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-2">
             <ThemeToggle />
-            {!isAuthenticated && (
-              <button onClick={login} className="hidden md:block">
+            <SignedOut>
+              <Link href="/sign-in" className="hidden md:block">
                 <div
                   className={
                     buttonVariants({
@@ -74,28 +62,17 @@ export function SiteHeader() {
                 >
                   <span>{t('login')}</span>
                 </div>
-              </button>
-            )}
+              </Link>
+            </SignedOut>
 
             <div className="hidden md:block">
               <LocaleSwitcher />
             </div>
 
-            {isAuthenticated && (
-              <>
-                <Link prefetch href={siteConfig.links.profile}>
-                  <div
-                    className={buttonVariants({
-                      size: 'icon',
-                      variant: 'ghost',
-                    })}
-                  >
-                    <Icons.profile className="size-7" />
-                    <span className="sr-only">{t('profile')}</span>
-                  </div>
-                </Link>
-              </>
-            )}
+            <SignedIn>
+              <UserButton afterSignOutUrl="/" />
+            </SignedIn>
+
             <Sheet
               open={isMobileMenuSheetOpen}
               onOpenChange={setMobileMenuSheetOpen}
@@ -138,17 +115,15 @@ export function SiteHeader() {
                           </Link>
                         )
                     )}
-                    {!isAuthenticated && (
-                      <button
-                        onClick={() => {
-                          login();
-                          closeSheet();
-                        }}
+                    <SignedOut>
+                      <Link
+                        href="/sign-in"
+                        onClick={closeSheet}
                         className="border-primary active:bg-muted w-full rounded-md border p-3 text-center focus:border focus:outline-none"
                       >
                         {t('login')}
-                      </button>
-                    )}
+                      </Link>
+                    </SignedOut>
                   </nav>
                 ) : null}
               </SheetContent>

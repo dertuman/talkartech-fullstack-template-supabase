@@ -1,7 +1,6 @@
 import { File } from 'buffer';
 import { NextResponse } from 'next/server';
-import { auth } from '@/auth';
-import { UserModel } from '@/models/UserModel';
+import { auth } from '@clerk/nextjs/server';
 import { DeleteObjectCommand, PutObjectCommand, S3 } from '@aws-sdk/client-s3';
 
 import {
@@ -11,25 +10,26 @@ import {
   SPACES_REGION,
   SPACES_SECRET,
 } from '@/lib/constants';
-import dbConnect from '@/lib/db';
+import { createClerkSupabaseClient } from '@/lib/supabase/server';
 import { randomUppercaseString } from '@/lib/utils';
 
-const s3Client = new S3({
-  forcePathStyle: false,
-  endpoint: `https://${SPACES_REGION}.${SPACES_ENDPOINT}`,
-  region: SPACES_REGION!,
-  credentials: {
-    accessKeyId: SPACES_KEY!,
-    secretAccessKey: SPACES_SECRET!,
-  },
-});
+function getS3Client() {
+  return new S3({
+    forcePathStyle: false,
+    endpoint: `https://${SPACES_REGION}.${SPACES_ENDPOINT}`,
+    region: SPACES_REGION!,
+    credentials: {
+      accessKeyId: SPACES_KEY!,
+      secretAccessKey: SPACES_SECRET!,
+    },
+  });
+}
 
 export async function POST(req: Request) {
   try {
-    await dbConnect();
-    const session = await auth();
+    const { userId } = await auth();
 
-    if (!session?.user?.id) {
+    if (!userId) {
       return NextResponse.json({ error: 'Not authorized' }, { status: 401 });
     }
 
@@ -48,7 +48,7 @@ export async function POST(req: Request) {
       const buffer = await file.arrayBuffer();
       const Key = randomUppercaseString() + '_' + file.name;
       path = 'https://PROJECT.fra1.digitaloceanspaces.com/' + Key;
-      await s3Client.send(
+      await getS3Client().send(
         new PutObjectCommand({
           Bucket: SPACES_NAME,
           Key,
@@ -59,13 +59,20 @@ export async function POST(req: Request) {
       );
     }
 
-    const updateResult = await UserModel.findByIdAndUpdate(session.user.id, {
-      $set: {
-        profilePicture: path
+    const supabase = await createClerkSupabaseClient();
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        profile_picture: path
           ? path
           : 'https://placehold.co/600x400/png?text=Hello+World',
-      },
-    });
+      })
+      .eq('id', userId);
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
 
     if (
       currentProfilePicture &&
@@ -74,16 +81,12 @@ export async function POST(req: Request) {
         'https://placehold.co/600x400/png?text=Hello+World'
     ) {
       const oldKey = new URL(currentProfilePicture).pathname.substring(1); // Remove the leading '/'
-      await s3Client.send(
+      await getS3Client().send(
         new DeleteObjectCommand({
           Bucket: SPACES_NAME,
           Key: oldKey,
         })
       );
-    }
-
-    if (!updateResult) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     return NextResponse.json({

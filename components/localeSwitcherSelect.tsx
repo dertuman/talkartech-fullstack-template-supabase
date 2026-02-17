@@ -1,6 +1,6 @@
 'use client';
 
-import { Locale } from '@/middleware';
+import { Locale } from '@/lib/locales';
 
 import {
   Select,

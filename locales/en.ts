@@ -5,68 +5,6 @@ export default {
       translations: 'Translations',
     },
   },
-  login: {
-    metaData: {
-      title: 'Login - PROJECT',
-      description: 'Login to your PROJECT account',
-      openGraph: {
-        locale: 'en_US',
-      },
-      imageAlt: 'PROJECT Login',
-    },
-    header: 'Login',
-    enterEmail: 'Enter your email',
-    emailRequired: 'Please enter your email',
-    emailInvalid: 'Email is invalid',
-    emailVerified: 'Email verified',
-    enterPassword: 'Enter your password',
-    passwordRequired: 'Please enter your password',
-    passwordMinLength: 'Password should be at least 8 characters',
-    loginWithGoogle: 'Continue with Google',
-  },
-  register: {
-    header: 'Register',
-    name: 'Name',
-    enterName: 'Enter your name',
-    nameRequired: 'Please enter your name',
-    nameInvalid: 'Name is invalid',
-    email: 'Email',
-    enterEmail: 'Enter your email',
-    emailRequired: 'Please enter your email',
-    emailInvalid: 'Email is invalid',
-    password: 'Password',
-    enterPassword: 'Enter your password',
-    passwordRequired: 'Password is required',
-    passwordMinLength: 'Password should be at least 8 characters',
-    confirmPassword: 'Confirm Password',
-    enterConfirmPassword: 'Enter your password',
-    passwordMismatch: 'Passwords should match!',
-    register: 'Register',
-    successTitle: 'Success 🫡',
-    successDescription:
-      'Fantastic, now please check your email and simply click the link 🎉',
-    errorRegistering: 'Error registering 😢',
-    errorDescription:
-      'There was an error during registration. Please try again.',
-    metaData: {
-      title: 'PROJECT® - The software development platform',
-      description: 'Discover PROJECT®',
-      openGraph: {
-        locale: 'en_US',
-      },
-      imageAlt: 'PROJECT® - The software development platform',
-    },
-  },
-  emailVerification: {
-    emailVerified: 'Welcome to PROJECT®!',
-    congratulations:
-      'Congratulations! All you have to do is finish your registration by visiting PROJECT through the button below.',
-    confirmButton: 'Confirm your account',
-  },
-  passwordReset: {
-    header: 'Reset password',
-    backToLogin: 'Back to login',
-  },
   profile: {
     settings: 'Settings',
     manage: 'Manage your account settings and set e-mail preferences.',
@@ -122,22 +60,6 @@ export default {
       updateAppearance: 'Update appearance',
       customize: 'Customize your experience. Set your preferred theme.',
     },
-    notifications: {
-      markAsRead: 'Mark as read',
-      title: 'Notifications',
-      configure: 'Configure how you receive notifications.',
-      notifyMeAbout: 'Notify me about...',
-      allNewMessages: 'All new messages',
-      directMessages: 'Direct messages and mentions',
-      nothing: 'Nothing',
-      emailNotifications: 'Email notifications',
-      securityEmails: 'Security emails',
-      securityEmailsDescription:
-        'Receive emails about your account activity and security.',
-      updateNotifications: 'Update notifications',
-      proposalReceived: 'New proposal received for activity {title}',
-      proposalSubmitted: 'New proposal submitted for activity',
-    },
     display: {
       title: 'Display',
       turnItemsOnOrOff:
@@ -150,10 +72,6 @@ export default {
   },
   common: {
     loading: 'Loading...',
-    register: 'Register',
-    email: 'Email',
-    password: 'Password',
-    forgotPassword: 'Forgot password?',
     login: 'Login',
     cancel: 'Cancel',
     errorTitle: 'Error',
@@ -172,20 +90,10 @@ export default {
   },
   siteHeader: {
     login: 'Login',
-
     about: 'About',
     admin: 'Admin',
-    notifications: 'Notifications',
-    viewAllNotifications: 'View all notifications',
-    noNotificationsFound: 'No notifications found',
     profile: 'Profile',
     comingSoon: 'Coming soon',
-  },
-  notifications: {
-    noNotificationsFound: 'No notifications found',
-    markAllAsRead: 'Mark all as read',
-    markAsRead: 'Mark as read',
-    view: 'View',
   },
   localeSwitcher: {
     languageUpdated: 'Language updated successfully',
@@ -200,44 +108,6 @@ export default {
     whatsapp: 'WhatsApp:',
     followUs: 'Follow Us',
     allRightsReserved: '© {year} PROJECT. All rights reserved.',
-  },
-  authDialog: {
-    joinUs: 'Join PROJECT®',
-    joinUsDescription:
-      'Sign in to save your progress, join the leaderboard, and unlock all features!',
-    orUseCredentials: 'or use credentials',
-    name: 'Name',
-    enterName: 'Enter your name',
-    nameRequired: 'Name is required',
-    email: 'Email',
-    enterEmail: 'Enter your email',
-    emailRequired: 'Email is required',
-    emailInvalid: 'Please enter a valid email',
-    password: 'Password',
-    enterPassword: 'Enter your password',
-    passwordRequired: 'Password is required',
-    passwordMinLength: 'Password must be at least 8 characters',
-    confirmPassword: 'Confirm Password',
-    enterConfirmPassword: 'Confirm your password',
-    confirmPasswordRequired: 'Please confirm your password',
-    passwordMismatch: 'Passwords do not match',
-    noAccount: 'New here?',
-    haveAccount: 'Already have an account?',
-    createAccount: 'Create an account in this dialog!',
-    signIn: 'Sign in',
-    login: 'Login',
-    register: 'Register',
-    cancel: 'Cancel',
-    error: 'Authentication Error',
-    emailVerificationRequired: 'Email verification required',
-    emailVerificationMessage:
-      'Check your email and click the verification link, check the spam folder, or click the button below to resend it.',
-    resendEmail: 'Resend Email',
-    verificationEmailSent: 'Verification Email Sent',
-    verificationEmailSentDescription:
-      'Please check your email and click the verification link to complete your account setup.',
-    verificationEmailError:
-      'Failed to send verification email. Please try again.',
   },
   cookies: {
     title: '🍪 We value your privacy',
@@ -267,11 +137,9 @@ export default {
     savePreferences: 'Save preferences',
   },
   badges: {
-    // General statuses
     pending: 'Pending',
     approved: 'Approved',
     rejected: 'Rejected',
-    // Boolean statuses
     active: 'Active',
     inactive: 'Inactive',
     featured: 'Featured',
