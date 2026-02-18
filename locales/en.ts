@@ -16,7 +16,7 @@ export default {
     yourEmail: 'Your email address',
     bio: 'Tell us a little bit about yourself',
     email: 'your@email.com',
-    PROJECTProfileImage: 'PROJECT® Profile Image',
+    PROJECTProfileImage: 'PROJECT Profile Image',
     addLinks: 'Add links to your website, blog, or social media profiles.',
     addUrl: 'Add URL',
     dateOfBirth: 'Date of Birth',
@@ -26,18 +26,18 @@ export default {
     updateProfile: 'Update profile',
     logout: 'Logout',
     metaData: {
-      title: 'PROJECT® - Your Software Development Platform',
+      title: 'PROJECT - Your Software Development Platform',
       description:
-        'Discover PROJECT®, the ultimate platform for software development and collaboration. Join PROJECT® today and bring your projects to life!',
+        'Discover PROJECT, the ultimate platform for software development and collaboration. Join PROJECT today and bring your projects to life!',
       openGraph: {
         locale: 'en_US',
       },
-      imageAlt: 'PROJECT® - Your Software Development Platform',
+      imageAlt: 'PROJECT - Your Software Development Platform',
     },
     account: {
       title: 'Account',
       update: 'Update your account settings. Set your preferred language.',
-      languageUpdated: 'Language updated succesfully',
+      languageUpdated: 'Language updated successfully',
       language: 'Language',
       selectLanguage: 'Select language',
       searchLanguage: 'Search language',
@@ -50,6 +50,7 @@ export default {
     appearance: {
       title: 'Appearance',
       appearanceUpdated: 'Appearance preferences updated',
+      errorUpdatingAppearance: 'Error updating appearance',
       font: 'Font',
       setFont: 'Set the font you want to use in the dashboard.',
       theme: 'Theme',
@@ -86,19 +87,24 @@ export default {
     failed: 'Error',
     noElementsFound: 'No elements found',
     siteName: 'PROJECT',
-    siteDescription: 'Discover PROJECT®, the ultimate platform.',
+    siteDescription: 'Discover PROJECT, the ultimate platform.',
+    welcomeBack: 'Welcome back,',
+    getStarted: 'Get Started',
   },
   siteHeader: {
     login: 'Login',
     about: 'About',
     admin: 'Admin',
     profile: 'Profile',
-    comingSoon: 'Coming soon',
+    comingSoon: 'Coming Soon',
+    completeSetup: 'Complete Setup',
+    description:
+      'PROJECT empowers your business with cutting-edge technology solutions.',
   },
   localeSwitcher: {
     languageUpdated: 'Language updated successfully',
+    errorUpdatingLanguage: 'Error updating language',
     en: 'English',
-    es: 'Spanish',
     label: 'Language',
   },
   footer: {
@@ -107,10 +113,42 @@ export default {
     email: 'Email:',
     whatsapp: 'WhatsApp:',
     followUs: 'Follow Us',
-    allRightsReserved: '© {year} PROJECT. All rights reserved.',
+    allRightsReserved: '\u00A9 {year} PROJECT. All rights reserved.',
+  },
+  hero: {
+    phrases: {
+      incredible: 'This project is incredible',
+      amazing: 'This project is amazing',
+      awesome: 'This project is awesome',
+      fantastic: 'This project is fantastic',
+      great: 'This project is great',
+      wonderful: 'This project is wonderful',
+    },
+  },
+  setup: {
+    label: 'Setup',
+    configureYourSite: 'Configure your site',
+    setupDescription:
+      'Connect authentication and database. About 5 minutes.',
+    redirecting: 'Redirecting...',
+    skipForNow: 'Skip for now \u2014 preview your site',
+    bannerIncomplete: 'Setup is incomplete.',
+    bannerFinish: 'Finish setup',
+    bannerDescription:
+      'to enable authentication and database features.',
+    steps: {
+      auth: 'Auth',
+      authDescription: 'Clerk',
+      database: 'Database',
+      databaseDescription: 'Supabase',
+      connect: 'Connect',
+      connectDescription: 'Clerk + Table',
+      deploy: 'Deploy',
+      deployDescription: 'GitHub + Vercel',
+    },
   },
   cookies: {
-    title: '🍪 We value your privacy',
+    title: 'We value your privacy',
     description:
       'We use cookies to enhance your browsing experience, serve personalized content, and analyze our traffic. By clicking "Accept all", you consent to our use of cookies.',
     acceptAll: 'Accept all',

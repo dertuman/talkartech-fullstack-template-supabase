@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { Check } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { useScopedI18n } from '@/locales/client';
+import { Check, Eye } from 'lucide-react';
 
 import { ClerkStep } from './clerk-step';
 import { SupabaseStep } from './supabase-step';
@@ -19,14 +20,10 @@ export interface SetupData {
   databaseVerified: boolean;
 }
 
-const STEPS = [
-  { title: 'Auth', description: 'Clerk' },
-  { title: 'Database', description: 'Supabase' },
-  { title: 'Connect', description: 'Clerk + Table' },
-  { title: 'Deploy', description: 'GitHub + Vercel' },
-];
-
 export function SetupWizard() {
+  const t = useScopedI18n('setup');
+  const tSteps = useScopedI18n('setup.steps');
+  const [isSkipping, setIsSkipping] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<SetupData>({
     clerkPublishableKey: '',
@@ -38,6 +35,16 @@ export function SetupWizard() {
     supabaseVerified: false,
     databaseVerified: false,
   });
+
+  const STEPS = useMemo(
+    () => [
+      { title: tSteps('auth'), description: tSteps('authDescription') },
+      { title: tSteps('database'), description: tSteps('databaseDescription') },
+      { title: tSteps('connect'), description: tSteps('connectDescription') },
+      { title: tSteps('deploy'), description: tSteps('deployDescription') },
+    ],
+    [tSteps]
+  );
 
   const updateData = (updates: Partial<SetupData>) => {
     setData((prev) => ({ ...prev, ...updates }));
@@ -60,14 +67,27 @@ export function SetupWizard() {
       {/* Header */}
       <div className="text-center">
         <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
-          Setup
+          {t('label')}
         </p>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
-          Configure your site
+          {t('configureYourSite')}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Connect authentication and database. About 5 minutes.
+          {t('setupDescription')}
         </p>
+        <button
+          disabled={isSkipping}
+          onClick={async () => {
+            setIsSkipping(true);
+            await fetch('/api/setup/skip', { method: 'POST' });
+            // Full reload so middleware + layout re-evaluate with the new cookie
+            window.location.href = '/';
+          }}
+          className="mt-3 inline-flex items-center gap-1.5 text-sm text-muted-foreground underline underline-offset-4 transition-colors hover:text-foreground disabled:opacity-50"
+        >
+          <Eye className="size-3.5" />
+          {isSkipping ? t('redirecting') : t('skipForNow')}
+        </button>
       </div>
 
       {/* Step indicators */}

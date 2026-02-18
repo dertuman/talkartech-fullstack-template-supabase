@@ -2,6 +2,10 @@ import { NextResponse } from 'next/server';
 import type { NextFetchEvent, NextRequest } from 'next/server';
 
 import { isAppConfigured } from '@/lib/setup/config';
+import { SETUP_SKIPPED_COOKIE } from '@/lib/setup/skip-cookie';
+
+/** Routes that require Clerk and must be blocked in preview mode. */
+const AUTH_ROUTES = ['/sign-in', '/sign-up', '/profile'];
 
 export default async function middleware(
   req: NextRequest,
@@ -12,7 +16,7 @@ export default async function middleware(
   if (!configured) {
     const { pathname } = req.nextUrl;
 
-    // Allow setup routes, setup API, and static assets through
+    // Always allow setup routes and setup API through
     if (
       pathname.startsWith('/setup') ||
       pathname.startsWith('/api/setup')
@@ -20,7 +24,23 @@ export default async function middleware(
       return NextResponse.next();
     }
 
-    // Redirect everything else to /setup
+    const setupSkipped =
+      req.cookies.get(SETUP_SKIPPED_COOKIE)?.value === '1';
+
+    if (setupSkipped) {
+      // User chose to preview the site — allow public routes through
+      // but block auth-dependent routes that would crash without Clerk
+      if (AUTH_ROUTES.some((route) => pathname.startsWith(route))) {
+        const url = new URL('/', req.url);
+        url.searchParams.set('setup', 'required');
+        return NextResponse.redirect(url);
+      }
+
+      // Allow everything else (home, about, etc.)
+      return NextResponse.next();
+    }
+
+    // Not configured and not skipped — redirect everything to /setup
     return NextResponse.redirect(new URL('/setup', req.url));
   }
 

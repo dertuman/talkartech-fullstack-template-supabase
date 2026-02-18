@@ -13,14 +13,14 @@ import { MainNav } from '@/components/main-nav';
 
 import LocaleSwitcher from './localeSwitcher';
 import { ThemeToggle } from './theme-toggle';
-import { buttonVariants } from './ui/button';
+import { Button } from './ui/button';
 
 export function SiteHeader() {
   const t = useScopedI18n('siteHeader');
+  const tCommon = useScopedI18n('common');
   const { profile } = useUserData();
   const siteConfig = {
-    description:
-      'PROJECT empowers your business with cutting-edge technology solutions.',
+    description: t('description'),
     mainNav: [
       {
         title: t('about'),
@@ -52,17 +52,11 @@ export function SiteHeader() {
           <nav className="flex items-center space-x-2">
             <ThemeToggle />
             <SignedOut>
-              <Link href="/sign-in" className="hidden md:block">
-                <div
-                  className={
-                    buttonVariants({
-                      variant: 'ghost',
-                    }) + ' px-9'
-                  }
-                >
-                  <span>{t('login')}</span>
-                </div>
-              </Link>
+              <Button variant="ghost" asChild className="hidden px-9 md:inline-flex">
+                <Link href="/sign-in">
+                  {t('login')}
+                </Link>
+              </Button>
             </SignedOut>
 
             <div className="hidden md:block">
@@ -78,15 +72,13 @@ export function SiteHeader() {
               onOpenChange={setMobileMenuSheetOpen}
             >
               <SheetTrigger asChild className="md:hidden">
-                <div
-                  className={buttonVariants({
-                    size: 'icon',
-                    variant: 'ghost',
-                  })}
+                <button
+                  type="button"
+                  className="inline-flex size-10 items-center justify-center rounded-md transition-colors hover:bg-accent hover:text-accent-foreground"
                 >
                   <Icons.menu className="size-7 fill-current" />
-                  <span className="sr-only">Burger button</span>
-                </div>
+                  <span className="sr-only">Toggle menu</span>
+                </button>
               </SheetTrigger>
               <SheetContent className="bg-card">
                 <DialogTitle className="sr-only">Mobile menu</DialogTitle>
@@ -97,7 +89,7 @@ export function SiteHeader() {
                   <nav className="mt-2 flex flex-col items-center gap-2">
                     <div className="mt-2 flex justify-between">
                       <h2 className="font-montserrat p-3 pl-2 text-lg font-black tracking-wide">
-                        PROJECT
+                        {tCommon('siteName')}
                       </h2>
                       <LocaleSwitcher />
                     </div>
@@ -105,11 +97,10 @@ export function SiteHeader() {
                       (item, index) =>
                         item.href && (
                           <Link
-                            prefetch
                             key={index}
                             href={item.comingSoon ? '#' : item.href}
                             onClick={closeSheet}
-                            className="border-primary active:bg-muted w-full rounded-md border p-3 text-center"
+                            className="border-primary active:bg-muted w-full rounded-md border p-3 text-center transition-colors hover:bg-accent hover:text-accent-foreground"
                           >
                             {item.title}
                           </Link>
@@ -119,7 +110,7 @@ export function SiteHeader() {
                       <Link
                         href="/sign-in"
                         onClick={closeSheet}
-                        className="border-primary active:bg-muted w-full rounded-md border p-3 text-center focus:border focus:outline-none"
+                        className="border-primary active:bg-muted w-full rounded-md border p-3 text-center transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none"
                       >
                         {t('login')}
                       </Link>

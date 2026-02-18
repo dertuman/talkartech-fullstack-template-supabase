@@ -4,14 +4,17 @@ import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useScopedI18n } from '@/locales/client';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useUser } from '@clerk/nextjs';
 
 import { Button } from '@/components/ui/button';
 
-export function ParallaxHeader() {
+/**
+ * Clerk-free version of ParallaxHeader used when the user has skipped setup.
+ * Same animated phrases and layout, but the CTA says "Get Started" and
+ * links to /setup instead of /sign-in. No useUser() import.
+ */
+export function ParallaxHeaderPreview() {
   const tCommon = useScopedI18n('common');
   const tHero = useScopedI18n('hero.phrases');
-  const { user } = useUser();
 
   const phrases = useMemo(
     () => [
@@ -42,14 +45,6 @@ export function ParallaxHeader() {
   return (
     <header className="relative h-[calc(100dvh-4.1rem)] w-full overflow-hidden">
       <div className="absolute inset-0 mb-10 flex flex-col items-center justify-center gap-4 px-4 text-center">
-        {/* Welcome message */}
-        {user?.fullName && (
-          <span className="text-muted-foreground text-lg">
-            {tCommon('welcomeBack')}{' '}
-            <span className="text-primary font-bold">{user.fullName}</span>
-          </span>
-        )}
-
         <h1 className="font-montserrat text-5xl font-black leading-tight tracking-wider md:text-6xl">
           {tCommon('siteName')}
         </h1>
@@ -75,8 +70,8 @@ export function ParallaxHeader() {
             size="lg"
             className="font-montserrat flex w-56 items-center gap-2 text-lg font-black tracking-wider"
           >
-            <Link href="/sign-in">
-              {tCommon('login')}
+            <Link href="/setup">
+              {tCommon('getStarted')}
             </Link>
           </Button>
         </div>

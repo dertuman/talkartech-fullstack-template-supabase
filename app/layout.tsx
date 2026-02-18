@@ -1,25 +1,13 @@
 import '@/styles/globals.css';
 
-import { Suspense } from 'react';
-import dynamic from 'next/dynamic';
-
 import { fontSans } from '@/lib/fonts';
 import { getLocale } from '@/lib/i18n';
 import { generateDefaultMetadata } from '@/lib/metadata-utils';
 import { isAppConfigured } from '@/lib/setup/config';
+import { isSetupSkipped } from '@/lib/setup/skip-cookie';
 import { cn } from '@/lib/utils';
 import { Toaster } from '@/components/ui/toaster';
 import { ThemeProvider } from '@/components/theme-provider';
-
-const AnimatedBackground = dynamic(
-  () =>
-    import('@/components/animated-background').then(
-      (mod) => mod.AnimatedBackground
-    ),
-  {
-    loading: () => null,
-  }
-);
 
 export async function generateMetadata() {
   return generateDefaultMetadata({
@@ -64,9 +52,6 @@ async function ConfiguredBody({
           <I18nProviderClient locale={locale}>
             <UserDataProvider>
               <div className="relative flex min-h-dvh flex-col">
-                <Suspense fallback={null}>
-                  <AnimatedBackground />
-                </Suspense>
                 <SiteHeader />
                 <div className="flex flex-1 flex-col items-center">
                   {children}
@@ -83,6 +68,42 @@ async function ConfiguredBody({
   );
 }
 
+/**
+ * Preview shell — used when the user skips setup to preview the site.
+ * Provides I18n + Theme (both work without external services) but
+ * does NOT load Clerk, React Query, or UserDataProvider.
+ */
+async function PreviewBody({
+  children,
+  locale,
+}: {
+  children: React.ReactNode;
+  locale: string;
+}) {
+  const { I18nProviderClient } = await import('@/locales/client');
+  const { PreviewSiteHeader } = await import(
+    '@/components/preview-site-header'
+  );
+  const { SiteFooter } = await import('@/components/site-footer');
+  const { SetupBanner } = await import('@/components/setup-banner');
+
+  return (
+    <ThemeProvider attribute="class" defaultTheme="dark">
+      <I18nProviderClient locale={locale}>
+        <div className="relative flex min-h-dvh flex-col">
+          <SetupBanner />
+          <PreviewSiteHeader />
+          <div className="flex flex-1 flex-col items-center">
+            {children}
+          </div>
+          <SiteFooter />
+        </div>
+        <Toaster />
+      </I18nProviderClient>
+    </ThemeProvider>
+  );
+}
+
 export default async function RootLayout({
   children,
 }: {
@@ -90,6 +111,7 @@ export default async function RootLayout({
 }) {
   const locale = await getLocale();
   const configured = isAppConfigured();
+  const skipped = !configured && (await isSetupSkipped());
 
   return (
     <html lang={locale} className="dark" suppressHydrationWarning>
@@ -102,7 +124,16 @@ export default async function RootLayout({
             <link rel="manifest" href="/manifest.json" />
           </>
         )}
-        <meta name="theme-color" content="#09090b" />
+        <meta
+          name="theme-color"
+          content="oklch(0.145 0 0)"
+          media="(prefers-color-scheme: dark)"
+        />
+        <meta
+          name="theme-color"
+          content="oklch(1 0 0)"
+          media="(prefers-color-scheme: light)"
+        />
         {configured && (
           <>
             <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -121,12 +152,14 @@ export default async function RootLayout({
       </head>
       <body
         className={cn(
-          'custom-scrollbar min-h-dvh font-sans antialiased',
+          'custom-scrollbar min-h-dvh bg-background font-sans antialiased',
           fontSans.variable
         )}
       >
         {configured ? (
           <ConfiguredBody locale={locale}>{children}</ConfiguredBody>
+        ) : skipped ? (
+          <PreviewBody locale={locale}>{children}</PreviewBody>
         ) : (
           <ThemeProvider attribute="class" defaultTheme="dark">
             <div className="relative flex min-h-dvh flex-col">
