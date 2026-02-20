@@ -7,9 +7,6 @@ import {
 } from '@/locales/client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useUser } from '@clerk/nextjs';
-
-import 'flag-icons/css/flag-icons.min.css';
-
 import { useCallback } from 'react';
 import { Locale, locales } from '@/lib/locales';
 

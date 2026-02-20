@@ -9,8 +9,6 @@ import {
   SelectTrigger,
 } from '@/components/ui/select';
 
-import 'flag-icons/css/flag-icons.min.css';
-
 type Props = {
   locales: readonly Locale[];
   defaultValue: Locale;

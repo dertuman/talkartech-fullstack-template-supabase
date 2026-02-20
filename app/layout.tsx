@@ -1,4 +1,5 @@
 import '@/styles/globals.css';
+import 'flag-icons/css/flag-icons.min.css';
 
 import { fontSans } from '@/lib/fonts';
 import { getLocale } from '@/lib/i18n';
