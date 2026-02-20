@@ -104,6 +104,34 @@ async function PreviewBody({
   );
 }
 
+/**
+ * Setup shell — used during initial setup before any external services
+ * are configured. Provides I18n + Theme so the setup wizard can use
+ * translated strings.
+ */
+async function SetupBody({
+  children,
+  locale,
+}: {
+  children: React.ReactNode;
+  locale: string;
+}) {
+  const { I18nProviderClient } = await import('@/locales/client');
+
+  return (
+    <ThemeProvider attribute="class" defaultTheme="dark">
+      <I18nProviderClient locale={locale}>
+        <div className="relative flex min-h-dvh flex-col">
+          <div className="flex flex-1 flex-col items-center">
+            {children}
+          </div>
+        </div>
+        <Toaster />
+      </I18nProviderClient>
+    </ThemeProvider>
+  );
+}
+
 export default async function RootLayout({
   children,
 }: {
@@ -161,14 +189,7 @@ export default async function RootLayout({
         ) : skipped ? (
           <PreviewBody locale={locale}>{children}</PreviewBody>
         ) : (
-          <ThemeProvider attribute="class" defaultTheme="dark">
-            <div className="relative flex min-h-dvh flex-col">
-              <div className="flex flex-1 flex-col items-center">
-                {children}
-              </div>
-            </div>
-            <Toaster />
-          </ThemeProvider>
+          <SetupBody locale={locale}>{children}</SetupBody>
         )}
       </body>
     </html>
