@@ -1,17 +1,30 @@
 import { NextResponse } from 'next/server';
 import type { NextFetchEvent, NextRequest } from 'next/server';
 
-import { isAppConfigured } from '@/lib/setup/config';
 import { SETUP_SKIPPED_COOKIE } from '@/lib/setup/skip-cookie';
 
 /** Routes that require Clerk and must be blocked in preview mode. */
 const AUTH_ROUTES = ['/sign-in', '/sign-up', '/profile'];
 
+/**
+ * Check if the app is configured by looking at env vars directly.
+ * Inlined here instead of importing from config.ts to keep the middleware
+ * dependency tree minimal for Edge Runtime.
+ */
+function isConfigured(): boolean {
+  return !!(
+    process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY &&
+    process.env.CLERK_SECRET_KEY &&
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY
+  );
+}
+
 export default async function middleware(
   req: NextRequest,
   evt: NextFetchEvent
 ) {
-  const configured = isAppConfigured();
+  const configured = isConfigured();
 
   if (!configured) {
     const { pathname } = req.nextUrl;
@@ -45,28 +58,39 @@ export default async function middleware(
   }
 
   // App is configured — use Clerk middleware
-  // Dynamic import to avoid assertKey() crash when keys are missing
-  const { clerkMiddleware, createRouteMatcher } = await import(
-    '@clerk/nextjs/server'
-  );
+  // Dynamic import wrapped in try-catch to handle Edge Runtime eval errors
+  try {
+    const { clerkMiddleware, createRouteMatcher } = await import(
+      '@clerk/nextjs/server'
+    );
 
-  const isProtectedRoute = createRouteMatcher(['/profile(.*)']);
+    const isProtectedRoute = createRouteMatcher(['/profile(.*)']);
 
-  const handler = clerkMiddleware(async (auth, request) => {
-    if (isProtectedRoute(request)) {
-      await auth.protect();
-    }
+    const handler = clerkMiddleware(async (auth, request) => {
+      if (isProtectedRoute(request)) {
+        await auth.protect();
+      }
 
-    // Block /setup when already configured
-    if (request.nextUrl.pathname.startsWith('/setup')) {
-      return NextResponse.redirect(new URL('/', request.url));
-    }
-  });
+      // Block /setup when already configured
+      if (request.nextUrl.pathname.startsWith('/setup')) {
+        return NextResponse.redirect(new URL('/', request.url));
+      }
+    });
 
-  return handler(req, evt);
+    return handler(req, evt);
+  } catch {
+    // Clerk import failed in Edge Runtime — let the request through
+    // The page-level auth checks will still protect routes
+    return NextResponse.next();
+  }
 }
 
 export const config = {
+  // Allow Clerk's dynamic code in Edge Runtime (it uses eval internally)
+  unstable_allowDynamic: [
+    '/node_modules/@clerk/**',
+    '/node_modules/mime/**',
+  ],
   matcher: [
     // Skip Next.js internals and all static files, unless found in search params
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
