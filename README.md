@@ -1,182 +1,165 @@
-## Project
+# Talkartech Full-Stack Template (Supabase)
 
-Awesome template project for building a fullstack Progressive Web App (PWA) with Next.js, Tailwind CSS, Shadcn UI, TypeScript, and MongoDB.
+A production-ready starter for web apps: **Next.js 16**, **React 19**, **Clerk** for authentication, **Supabase** for Postgres and storage, **Tailwind CSS 4** with **shadcn/ui**, and **next-intl** for translations. It boots without any credentials and walks you through setup in the browser.
 
-## Development
+## What you get
 
-Dear user, please read the entire README before commencing. I hope working with this repo is a pleasant experience. If you have any questions, please feel free to reach out to me,
-Alex TK
+- **Auth with Clerk**: sign-in, sign-up, social logins, and a full account page (email, password, MFA, sessions) under `/settings/account`. Clerk's UI follows the app language.
+- **Supabase with real security**: versioned SQL migrations, generated TypeScript types, row level security, and column-level grants so users can never change their own `role`. Clerk tokens are trusted by Supabase through the native third-party auth integration, so every query runs as the signed-in user.
+- **Profiles and avatars**: a `profiles` row is created on first visit (the Clerk webhook is a backstop and handles deletion), and avatars upload to a Supabase Storage bucket where each user can only write to their own folder.
+- **Server Actions with shared validation**: Zod schemas are used by the browser forms and re-checked on the server. Errors come back as translation keys.
+- **Internationalisation**: English and Spanish out of the box, locale from a cookie or the browser, no URL prefixes. A test fails if a translation file is missing a key.
+- **Admin example**: `/admin` lists all users, and only works because a database policy allows admins to read every profile.
+- **Privacy-friendly analytics**: Google Analytics only loads after the visitor accepts the cookie banner, and the banner only appears if analytics are configured.
+- **Quality gates**: strict TypeScript, validated environment variables, ESLint, Prettier, Vitest, Playwright, pgTAP database tests, and GitHub Actions running all of them.
+- **SEO and platform basics**: metadata, Open Graph image, sitemap, robots, web manifest, security headers, health check endpoint.
 
-## Google Maps
+## Quick start
 
-Your google maps link
+Requirements: Node 22.12 or newer (see `.nvmrc`). Docker is only needed for the local Supabase stack.
 
-## Google Analytics
-
-Your google analytics link
-
-## Google Tag Manager
-
-Your google tag manager link
-
-## Emails
-
-For email development, we are using react-email. To create or develop an email, go to root > emails, and edit or create an email in tsx format. To preview it, use the command `npm run emails`, and a new development server will run on port 3001 (assuming you're using port 3000 for your next.js development server). This way you can edit your email and view the changes in real time. The emails will generally accept props for their data, but the preview server doesn't take props, so we use the default parameter values for the preview server.
-
-## Development Conventions
-
-- **Folder names** example-folder
-- **File names** example-file
-- **Component names** example-component
-- **Variable names** exampleVariable
-- **Function names** exampleFunction
-- **Class names** ExampleClass
-- **Types** ExampleType
-- **Constants** EXAMPLE_CONSTANT
-- **Environment Variables** EXAMPLE_ENV_VARIABLE
-
-## Types and Models
-
-Most TypeScript types should live inside each respective Model file, in the models folder. Only if no model exists, use the `types` folder.
-For example, when defining types and models use this convention:
-
-```ts
-export interface User
-
-export const UserModel
+```bash
+npm install
 ```
-
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
-## Running the development server
-
-First, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000. With no credentials the app redirects to `/setup`, a wizard that:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+1. Checks your Clerk keys.
+2. Checks your Supabase keys.
+3. Shows you how to connect Clerk to Supabase and create the tables.
+4. Writes `.env.local` for you, and optionally pushes the project to a new GitHub repo and deploys it on Vercel.
+
+Prefer doing it by hand? Copy `.env.example` to `.env.local`, fill it in, and apply the migrations (see below). You can also click "Skip for now" to preview the site without any services.
+
+The setup API only runs in development and only while the app is unconfigured. In production it returns 404.
+
+## Connecting Clerk and Supabase
+
+1. In Clerk, open [Supabase integration](https://dashboard.clerk.com/setup/supabase), activate it, and copy your Clerk domain.
+2. In Supabase, go to Authentication, Sign In / Providers, Third-Party Auth, add **Clerk** and paste the domain.
+3. Apply the database schema, either:
+   - with the CLI: `npx supabase link` then `npm run db:push`, or
+   - by pasting `supabase/migrations/*.sql` into the Supabase SQL editor.
+4. In Clerk, add a webhook to `https://your-domain/api/webhooks/clerk` for `user.created` and `user.deleted`, and set `CLERK_WEBHOOK_SIGNING_SECRET`.
+
+To make yourself an admin, run this in the Supabase SQL editor:
+
+```sql
+update public.profiles set role = 'admin' where id = 'user_...';
+```
+
+## Scripts
+
+| Command                         | What it does                                              |
+| ------------------------------- | --------------------------------------------------------- |
+| `npm run dev`                   | Start the dev server                                      |
+| `npm run build` / `npm start`   | Production build and server                               |
+| `npm run check`                 | Lint, typecheck and unit tests                            |
+| `npm run lint` / `lint:fix`     | ESLint                                                    |
+| `npm run format`                | Prettier, including import and Tailwind class sorting     |
+| `npm run typecheck`             | Generate route types, then `tsc`                          |
+| `npm test`                      | Vitest unit tests                                         |
+| `npm run test:e2e`              | Playwright, against a server on port 3100                 |
+| `npm run db:start` / `db:stop`  | Local Supabase stack (Docker)                             |
+| `npm run db:reset`              | Recreate the local database from migrations and seed      |
+| `npm run db:diff -- <name>`     | Generate a migration from changes made in local Studio    |
+| `npm run db:push`               | Apply migrations to the linked Supabase project           |
+| `npm run db:types`              | Regenerate `src/lib/supabase/database.types.ts`           |
+| `npm run test:db`               | Run pgTAP tests in `supabase/tests`                       |
+
+## Working with the database
+
+Migrations in `supabase/migrations` are the single source of truth. Never change the schema only in the dashboard.
+
+```bash
+npm run db:start
+```
+
+```bash
+npm run db:reset
+```
+
+After changing the schema, regenerate the types with `npm run db:types` and add a pgTAP test for any new policy in `supabase/tests/database`. `npm run db:start` prints local keys you can put in `.env.local`. To use real Clerk sessions against the local stack, enable `[auth.third_party.clerk]` in `supabase/config.toml`.
+
+Three Supabase clients, each for one job:
+
+| Import                        | Use it in                              | Runs as                     |
+| ----------------------------- | -------------------------------------- | --------------------------- |
+| `@/lib/supabase/server`       | Server Components, Actions, Routes     | The signed-in user (RLS)    |
+| `@/lib/supabase/client`       | Client Components (`useSupabase()`)    | The signed-in user (RLS)    |
+| `@/lib/supabase/admin`        | Webhooks, cron, scripts only           | Service role, bypasses RLS  |
+
+## Project structure
+
+```
+messages/              Translations (en.json is the reference)
+supabase/
+  migrations/          SQL migrations, applied in order
+  tests/database/      pgTAP tests for RLS and privileges
+  seed.sql             Local seed data
+src/
+  app/
+    (site)/            Pages with the header and footer
+      (auth)/          Clerk sign-in and sign-up
+      settings/        Profile, preferences, account (+ actions.ts)
+      admin/           Admin-only example
+    api/               Health check, Clerk webhook, setup wizard API
+    setup/             Setup wizard
+  components/          App components; ui/ holds shadcn/ui primitives
+  i18n/                Locale config and request resolution
+  lib/
+    actions/           Server Actions shared across pages
+    supabase/          Clients and generated types
+    validation/        Zod schemas shared by client and server
+    auth.ts            requireUserId() for protected pages
+    profile.ts         getCurrentProfile(), cached per request
+  env.ts               Validated environment variables
+  proxy.ts             Clerk middleware and setup-mode routing
+tests/e2e/             Playwright specs
+```
+
+## Conventions
+
+- **Authorization lives with the data.** Every protected page calls `requireUserId()`, every Server Action checks `auth()`, and RLS is the final word. The proxy only routes between setup mode and the app.
+- **Read in Server Components, write in Server Actions.** Actions validate with the shared Zod schema and return an `ActionResult` instead of throwing.
+- **No hardcoded copy.** Add strings to `messages/en.json` and `messages/es.json`. Validation messages are keys under `validation`.
+- **Use `env`, not `process.env`.** Add new variables to `src/env.ts` and `.env.example`.
+- **Add UI primitives with the shadcn CLI**: `npx shadcn@latest add <component>`.
+- Files and folders are `kebab-case`, components `PascalCase`, constants `SCREAMING_SNAKE_CASE`.
+
+## Adding a language
+
+1. Add the code to `locales` and `localeNames` in `src/i18n/config.ts`.
+2. Copy `messages/en.json` to `messages/<code>.json` and translate it. `npm test` tells you if a key is missing.
+3. Add the matching Clerk localization in `src/app/layout.tsx`.
 
 ## Testing
 
-We use playwright for automated testing.
+- `npm test` runs unit tests for validation, locale negotiation, action results and translation completeness.
+- `npm run test:e2e` starts the app on port 3100 and runs Playwright on desktop and mobile. Without credentials it tests setup mode. With Clerk keys plus `E2E_CLERK_USER_EMAIL` and `E2E_CLERK_USER_PASSWORD` (a password user in your Clerk development instance), it also tests the signed-in flows.
+- `npm run test:db` checks that users can only read and change their own data, cannot promote themselves, and cannot write into other users' storage folders.
 
-Useful commands:
+## Deploying to Vercel
 
-Watch tests
+1. Create a production instance in Clerk, add its DNS records, and wait for them to verify.
+2. Set every variable from `.env.example` in Vercel (Settings, Environment Variables). `NEXT_PUBLIC_` values are inlined at build time, so redeploy after changing them.
+3. Apply migrations to the production Supabase project (`npm run db:push`).
+4. Add the production webhook in Clerk and set `CLERK_WEBHOOK_SIGNING_SECRET`.
+5. If you use Google sign-in, add your domain to the OAuth client in Google Cloud Console.
 
-```bash
-npx playwright test post-one-user --watch
-```
+| Symptom                                   | Fix                                                                  |
+| ----------------------------------------- | -------------------------------------------------------------------- |
+| Site shows "This deployment is not configured" | Environment variables are missing; add them and redeploy        |
+| Clerk fails to load in production         | DNS or SSL for `clerk.your-domain` not ready yet                     |
+| Queries return nothing for signed-in users | Clerk is not added as a third-party provider in Supabase            |
+| Avatar upload fails                       | Migrations not applied, so the `avatars` bucket does not exist       |
 
-Run one test in headed mode
+## Before you ship your own product
 
-```bash
-npx playwright test post-one-user --headed
-```
-
-Run codegen to record your actions to a test
-
-```bash
-npx playwright codegen http://localhost:3000/
-```
-
-## DB Migration Scripts
-
-We can create scripts to migrate users, under the scripts folder. This can be useful if we want to add new properties to our data models, or if we want to reset data. For example, to reset all users, we can run the following command:
-
-```bash
-npm run reset-users
-```
-
-## Deploying to Production
-
-The setup wizard handles local development automatically, but going live requires a few extra steps. Follow these in order.
-
-### 1. Create Production Instances
-
-- **Clerk**: In your Clerk dashboard, switch to the **Production** instance (or create one). This gives you live API keys (`pk_live_...`, `sk_live_...`).
-- **Supabase**: Use your existing Supabase project (the same one works for both dev and prod).
-
-### 2. Set Up DNS for Clerk (Required)
-
-Clerk in production needs DNS records on your domain. Go to **Clerk Dashboard > Production > Domains** and add these CNAME records in your DNS provider:
-
-| Record | Host | Target |
-|--------|------|--------|
-| CNAME | `clerk` | `frontend-api.clerk.services` |
-| CNAME | `accounts` | `accounts.clerk.services` |
-| CNAME | `clkmail` | _(value shown in Clerk dashboard)_ |
-| CNAME | `clk._domainkey` | _(value shown in Clerk dashboard)_ |
-| CNAME | `clk2._domainkey` | _(value shown in Clerk dashboard)_ |
-
-Wait until all records show **Verified** in the Clerk dashboard and both **SSL certificates** (Frontend API and Account portal) are issued. This can take a few minutes to an hour.
-
-### 3. Set Up the Clerk Webhook
-
-This is what syncs new users to your Supabase `profiles` table.
-
-1. Go to **Clerk Dashboard > Production > Webhooks**
-2. Click **Add Endpoint**
-3. Set the URL to: `https://yourdomain.com/api/webhooks/clerk`
-4. Subscribe to events: `user.created`, `user.deleted`
-5. Copy the **Signing Secret** (`whsec_...`) — you'll need it for the next step
-
-### 4. Configure Vercel Environment Variables
-
-In **Vercel > your project > Settings > Environment Variables**, add all of the following:
-
-| Variable | Value |
-|----------|-------|
-| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | `pk_live_...` (from Clerk Production > API Keys) |
-| `CLERK_SECRET_KEY` | `sk_live_...` (from Clerk Production > API Keys) |
-| `CLERK_WEBHOOK_SECRET` | `whsec_...` (from step 3) |
-| `NEXT_PUBLIC_CLERK_SIGN_IN_URL` | `/sign-in` |
-| `NEXT_PUBLIC_CLERK_SIGN_UP_URL` | `/sign-up` |
-| `NEXT_PUBLIC_SUPABASE_URL` | `https://yourproject.supabase.co` |
-| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY` | Your Supabase anon/publishable key |
-| `SUPABASE_SECRET_DEFAULT_KEY` | Your Supabase service role key |
-| `NEXT_PUBLIC_NODE_ENV` | `production` |
-
-**Important**: `NEXT_PUBLIC_` variables are baked into the JavaScript bundle at build time. After adding or changing them, you must **redeploy with a clean build** (uncheck "Use existing Build Cache" in Vercel).
-
-### 5. Google OAuth (If Using Google Sign-In)
-
-If you configured Google as a social login provider in Clerk:
-
-1. Go to **Clerk Dashboard > Production > SSO Connections > Google** and note the redirect URI
-2. In **Google Cloud Console > Credentials > your OAuth client**, add:
-   - `https://yourdomain.com` to **Authorized JavaScript origins**
-   - Clerk's redirect URI to **Authorized redirect URIs**
-
-### 6. Deploy
-
-1. Push your code to GitHub
-2. In Vercel, trigger a new deployment
-3. **Uncheck** "Use existing Build Cache" to ensure env vars are embedded
-4. Once deployed, verify:
-   - The login button appears in the header
-   - Sign-up/sign-in works
-   - New users appear in both Clerk dashboard and Supabase `profiles` table
-
-### Troubleshooting
-
-| Symptom | Cause | Fix |
-|---------|-------|-----|
-| No login button in header | `NEXT_PUBLIC_` vars not in build | Redeploy without cache |
-| Clerk JS fails to load (CORS/404 errors) | SSL certificates not ready on `clerk.yourdomain.com` | Wait for SSL issuance in Clerk Domains page |
-| User signs up but no Supabase profile | Webhook not configured or `CLERK_WEBHOOK_SECRET` missing | Set up webhook in Clerk + add secret to Vercel |
-| Google sign-in error | Domain not in Google OAuth origins | Add your domain to Google Cloud Console |
-
-## Learn More
-
-To learn more, contact Alex T. Karslake
+- Rename `PROJECT` in `src/lib/site.ts`, and replace `public/logo.png`, `src/app/icon.png` and `src/app/apple-icon.png`.
+- Delete the setup wizard (`src/app/setup`, `src/app/api/setup`, `src/lib/setup`) once you no longer need it, and simplify `src/proxy.ts`.
+- Plug an error tracker into `src/app/error.tsx` and `src/app/global-error.tsx`.

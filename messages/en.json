@@ -1,0 +1,154 @@
+{
+  "metadata": {
+    "description": "A production-ready Next.js, Clerk and Supabase starter."
+  },
+  "nav": {
+    "home": "Home",
+    "settings": "Settings",
+    "admin": "Admin",
+    "signIn": "Sign in",
+    "signUp": "Sign up",
+    "menu": "Menu",
+    "openMenu": "Open menu",
+    "completeSetup": "Complete setup"
+  },
+  "theme": {
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "locale": {
+    "label": "Language"
+  },
+  "home": {
+    "welcomeBack": "Welcome back, {name}",
+    "title": "Ship your idea, not your boilerplate",
+    "subtitle": "Authentication, a secured Postgres database, file storage, internationalisation and a test suite, wired together and ready to build on.",
+    "getStarted": "Get started",
+    "openSettings": "Open settings",
+    "features": {
+      "auth": {
+        "title": "Clerk authentication",
+        "description": "Sign-in, sign-up, social logins and account management, protected routes enforced in the proxy."
+      },
+      "database": {
+        "title": "Supabase with row level security",
+        "description": "Versioned migrations, generated types and policy tests. Users can only ever touch their own rows."
+      },
+      "storage": {
+        "title": "File uploads",
+        "description": "Avatar uploads to Supabase Storage, compressed in the browser and scoped to each user's folder."
+      },
+      "quality": {
+        "title": "Tested and typed",
+        "description": "Strict TypeScript, validated environment, Vitest, Playwright, pgTAP and CI on every pull request."
+      }
+    }
+  },
+  "footer": {
+    "rights": "© {year} {name}. All rights reserved.",
+    "contact": "Contact"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your profile and preferences.",
+    "nav": {
+      "profile": "Profile",
+      "preferences": "Preferences",
+      "account": "Account and security"
+    },
+    "profile": {
+      "title": "Profile",
+      "description": "How you appear in the app.",
+      "avatar": "Profile picture",
+      "avatarHint": "JPG, PNG, WebP or GIF, up to 2 MB.",
+      "uploadAvatar": "Upload picture",
+      "removeAvatar": "Remove",
+      "avatarUpdated": "Profile picture updated",
+      "avatarRemoved": "Profile picture removed",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "emailHint": "Change your email under Account and security.",
+      "bio": "Bio",
+      "bioHint": "A few words about yourself. Up to 300 characters.",
+      "dateOfBirth": "Date of birth",
+      "save": "Save changes",
+      "saved": "Profile updated"
+    },
+    "preferences": {
+      "title": "Preferences",
+      "description": "Customise how the app looks and which language it speaks.",
+      "theme": "Theme",
+      "language": "Language",
+      "save": "Save preferences",
+      "saved": "Preferences updated"
+    },
+    "account": {
+      "title": "Account and security",
+      "description": "Email addresses, password, connected accounts and active sessions."
+    }
+  },
+  "admin": {
+    "title": "Users",
+    "description": "Everyone with a profile. Visible to admins only.",
+    "user": "User",
+    "role": "Role",
+    "language": "Language",
+    "joined": "Joined",
+    "empty": "No users yet."
+  },
+  "validation": {
+    "firstNameRequired": "Enter your first name.",
+    "firstNameTooLong": "First name must be 64 characters or fewer.",
+    "lastNameTooLong": "Last name must be 64 characters or fewer.",
+    "bioTooLong": "Bio must be 300 characters or fewer.",
+    "dateInvalid": "Enter a valid date.",
+    "dateTooEarly": "Enter a date after 1900.",
+    "dateInFuture": "Date of birth cannot be in the future.",
+    "avatarMissing": "Choose an image to upload.",
+    "avatarTooLarge": "Image must be 2 MB or smaller.",
+    "avatarWrongType": "Use a JPG, PNG, WebP or GIF image."
+  },
+  "errors": {
+    "unauthorized": "Your session has expired. Sign in again.",
+    "invalidInput": "Some fields need attention.",
+    "unexpected": "Something went wrong. Please try again."
+  },
+  "setup": {
+    "configureYourSite": "Configure your site",
+    "setupDescription": "Connect authentication and database. About 5 minutes.",
+    "redirecting": "Redirecting",
+    "skipForNow": "Skip for now and preview the site",
+    "bannerIncomplete": "Setup is incomplete.",
+    "bannerFinish": "Finish setup",
+    "bannerDescription": "to enable sign-in and the database.",
+    "steps": {
+      "auth": "Auth",
+      "authDescription": "Clerk",
+      "database": "Database",
+      "databaseDescription": "Supabase",
+      "connect": "Connect",
+      "connectDescription": "Clerk and tables",
+      "deploy": "Deploy",
+      "deployDescription": "GitHub and Vercel"
+    }
+  },
+  "cookies": {
+    "title": "Cookies",
+    "description": "We use essential cookies to run the site. With your permission we also use analytics cookies to understand how it is used.",
+    "accept": "Accept analytics",
+    "reject": "Essential only"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist or has moved.",
+    "goHome": "Go home"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "description": "An unexpected error occurred. Try again, and if it keeps happening, contact us.",
+    "retry": "Try again"
+  }
+}

@@ -1,42 +1,41 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
-/.pnp
-.pnp.js
-.yarn/install-state.gz
-
-# testing
-/coverage
-/test-results
 
 # next.js
 /.next/
 /out/
+next-env.d.ts
+*.tsbuildinfo
 
-# production
-/build
+# testing
+/coverage
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
+# env files (commit .env.example only)
+.env
+.env*.local
+.env.test
+
+# supabase
+supabase/.branches
+supabase/.temp
+supabase/.env
 
 # misc
 .DS_Store
 *.pem
-
-# debug
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
-# local env files
-.env*.local
-
-# vercel
+# deployment
 .vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-.env
 
 # clerk configuration (can include secrets)
 /.clerk/
+
+# local tooling
+.eslintcache
+/.claude/

@@ -1,0 +1,154 @@
+{
+  "metadata": {
+    "description": "Una plantilla de Next.js, Clerk y Supabase lista para producción."
+  },
+  "nav": {
+    "home": "Inicio",
+    "settings": "Ajustes",
+    "admin": "Administración",
+    "signIn": "Iniciar sesión",
+    "signUp": "Registrarse",
+    "menu": "Menú",
+    "openMenu": "Abrir menú",
+    "completeSetup": "Completar configuración"
+  },
+  "theme": {
+    "label": "Tema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema"
+  },
+  "locale": {
+    "label": "Idioma"
+  },
+  "home": {
+    "welcomeBack": "Hola de nuevo, {name}",
+    "title": "Lanza tu idea, no tu código repetitivo",
+    "subtitle": "Autenticación, una base de datos Postgres protegida, almacenamiento de archivos, internacionalización y pruebas, conectados y listos para construir.",
+    "getStarted": "Empezar",
+    "openSettings": "Abrir ajustes",
+    "features": {
+      "auth": {
+        "title": "Autenticación con Clerk",
+        "description": "Inicio de sesión, registro, acceso social y gestión de cuenta, con rutas protegidas desde el proxy."
+      },
+      "database": {
+        "title": "Supabase con seguridad a nivel de fila",
+        "description": "Migraciones versionadas, tipos generados y pruebas de políticas. Cada usuario solo puede tocar sus propias filas."
+      },
+      "storage": {
+        "title": "Subida de archivos",
+        "description": "Fotos de perfil en Supabase Storage, comprimidas en el navegador y limitadas a la carpeta de cada usuario."
+      },
+      "quality": {
+        "title": "Probado y tipado",
+        "description": "TypeScript estricto, entorno validado, Vitest, Playwright, pgTAP e integración continua en cada pull request."
+      }
+    }
+  },
+  "footer": {
+    "rights": "© {year} {name}. Todos los derechos reservados.",
+    "contact": "Contacto"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "description": "Gestiona tu perfil y tus preferencias.",
+    "nav": {
+      "profile": "Perfil",
+      "preferences": "Preferencias",
+      "account": "Cuenta y seguridad"
+    },
+    "profile": {
+      "title": "Perfil",
+      "description": "Cómo apareces en la aplicación.",
+      "avatar": "Foto de perfil",
+      "avatarHint": "JPG, PNG, WebP o GIF, hasta 2 MB.",
+      "uploadAvatar": "Subir foto",
+      "removeAvatar": "Quitar",
+      "avatarUpdated": "Foto de perfil actualizada",
+      "avatarRemoved": "Foto de perfil eliminada",
+      "firstName": "Nombre",
+      "lastName": "Apellidos",
+      "email": "Correo electrónico",
+      "emailHint": "Cambia tu correo en Cuenta y seguridad.",
+      "bio": "Biografía",
+      "bioHint": "Unas palabras sobre ti. Hasta 300 caracteres.",
+      "dateOfBirth": "Fecha de nacimiento",
+      "save": "Guardar cambios",
+      "saved": "Perfil actualizado"
+    },
+    "preferences": {
+      "title": "Preferencias",
+      "description": "Personaliza el aspecto de la aplicación y su idioma.",
+      "theme": "Tema",
+      "language": "Idioma",
+      "save": "Guardar preferencias",
+      "saved": "Preferencias actualizadas"
+    },
+    "account": {
+      "title": "Cuenta y seguridad",
+      "description": "Correos electrónicos, contraseña, cuentas conectadas y sesiones activas."
+    }
+  },
+  "admin": {
+    "title": "Usuarios",
+    "description": "Todas las personas con perfil. Solo visible para administradores.",
+    "user": "Usuario",
+    "role": "Rol",
+    "language": "Idioma",
+    "joined": "Alta",
+    "empty": "Todavía no hay usuarios."
+  },
+  "validation": {
+    "firstNameRequired": "Escribe tu nombre.",
+    "firstNameTooLong": "El nombre debe tener 64 caracteres o menos.",
+    "lastNameTooLong": "Los apellidos deben tener 64 caracteres o menos.",
+    "bioTooLong": "La biografía debe tener 300 caracteres o menos.",
+    "dateInvalid": "Introduce una fecha válida.",
+    "dateTooEarly": "Introduce una fecha posterior a 1900.",
+    "dateInFuture": "La fecha de nacimiento no puede ser futura.",
+    "avatarMissing": "Elige una imagen para subir.",
+    "avatarTooLarge": "La imagen debe ocupar 2 MB o menos.",
+    "avatarWrongType": "Usa una imagen JPG, PNG, WebP o GIF."
+  },
+  "errors": {
+    "unauthorized": "Tu sesión ha caducado. Vuelve a iniciar sesión.",
+    "invalidInput": "Revisa los campos marcados.",
+    "unexpected": "Algo ha fallado. Inténtalo de nuevo."
+  },
+  "setup": {
+    "configureYourSite": "Configura tu sitio",
+    "setupDescription": "Conecta la autenticación y la base de datos. Unos 5 minutos.",
+    "redirecting": "Redirigiendo",
+    "skipForNow": "Omitir por ahora y ver el sitio",
+    "bannerIncomplete": "La configuración está incompleta.",
+    "bannerFinish": "Termina la configuración",
+    "bannerDescription": "para activar el inicio de sesión y la base de datos.",
+    "steps": {
+      "auth": "Autenticación",
+      "authDescription": "Clerk",
+      "database": "Base de datos",
+      "databaseDescription": "Supabase",
+      "connect": "Conectar",
+      "connectDescription": "Clerk y tablas",
+      "deploy": "Desplegar",
+      "deployDescription": "GitHub y Vercel"
+    }
+  },
+  "cookies": {
+    "title": "Cookies",
+    "description": "Usamos cookies esenciales para que el sitio funcione. Con tu permiso, también usamos cookies de analítica para entender cómo se usa.",
+    "accept": "Aceptar analítica",
+    "reject": "Solo esenciales"
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "description": "La página que buscas no existe o se ha movido.",
+    "goHome": "Ir al inicio"
+  },
+  "error": {
+    "title": "Algo ha fallado",
+    "description": "Se ha producido un error inesperado. Inténtalo de nuevo y, si sigue ocurriendo, contáctanos.",
+    "retry": "Reintentar"
+  }
+}
