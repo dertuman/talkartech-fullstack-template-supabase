@@ -19,7 +19,7 @@ This project uses Next.js 16, React 19, Clerk Core 3 (`@clerk/nextjs` 7), Zod 4,
 - User-facing text goes in `messages/en.json` and every other locale file. Validation messages are keys under `validation`.
 - Read environment variables through `env` from `@/env`, and declare new ones there and in `.env.example`.
 - Add UI primitives with `npx shadcn@latest add`, not by hand. Import `cn` from `cn`.
-- Dev and test servers for this repo run on port 3100 (`npm run dev -- -p 3100`); Playwright already uses it.
+- Interactive development follows the dev server policy below. Playwright retains its isolated test port.
 
 ## Before you finish
 
@@ -38,3 +38,22 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Local development servers (user preference, 2026-11-11)
+
+- Start or find this repository's dev server with
+  `~/Documents/GitHub/scripts/dev up`, run from this checkout, and review on
+  the URL it prints. Never start a server by hand or choose a port yourself.
+  This is standing authorization; do not ask again.
+- The script reuses a server already serving this checkout, so every agent
+  on this project shares one. A new server gets port 3000 when it is free and
+  the next free port (3001, 3002) when another project is in use there.
+- Never stop another project's dev server yourself. The script stops only
+  servers no agent is using. `dev up --main` moves this repository onto 3000
+  and stops the dev server there: use it only when the user asks for 3000 or
+  a login callback is registered for 3000.
+- If the script reports that 3000 is held by something that is not a dev
+  server, report that rather than killing it.
+- Verify the server responds and check the change there yourself. This does
+  not authorize production builds, deployments, commits, pushes, or unrelated
+  tests and data changes.
